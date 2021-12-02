@@ -2,37 +2,19 @@
 
 internal class Day01 : BaseDay
 {
-    protected override string Part1()
+    protected int[] ParseInput() => ReadAllLines().Select(int.Parse).ToArray();
+
+    protected override object Part1()
     {
-        var input = ReadAllLines().Select(int.Parse).ToList();
-        var part1 = 0;
-        var prev = input.First();
+        var input = ParseInput();
 
-        foreach (var m in input)
-        {
-            part1 += m > prev ? 1 : 0;
-            prev = m;
-        }
-
-        return part1.ToString();
+        return input.Where((c, i) => i > 0 && c > input[i - 1]).Count();
     }
 
-    protected override string Part2()
+    protected override object Part2()
     {
-        var input = ReadAllLines().Select(int.Parse).ToList();
-        var part2 = 0;
-        var prev = input.First();
+        var input = ParseInput();
 
-        for (int i = 0; i < input.Count - 2; i++)
-        {
-            var sum = input.Skip(i).Take(3).Sum();
-            if (sum > prev)
-            {
-                part2++;
-            }
-            prev = sum;
-        }
-
-        return part2.ToString();
+        return input.Where((c, i) => (i > 0 && i < input.Length - 2) && input[i..(i + 3)].Sum() > input[(i - 1)..(i + 2)].Sum()).Count();
     }
 }
