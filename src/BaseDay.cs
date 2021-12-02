@@ -4,7 +4,7 @@ internal abstract class BaseDay
 {
     private string _input = string.Empty;
 
-    private void Solve(bool test, Func<string> part)
+    public void Solve(bool test)
     {
         string day = GetType().Name[^2..];
         var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Environment.CurrentDirectory;
@@ -14,21 +14,18 @@ internal abstract class BaseDay
         if (File.Exists(inputfile))
         {
             _input = File.ReadAllText(inputfile);
+            if (!string.IsNullOrWhiteSpace(_input))
+            {
+                Console.WriteLine($"Part 1");
+                Console.WriteLine($"\t{Part1()}");
 
-            Console.WriteLine($"\t{(test ? "Test" : "Real")} Day {day} - {part()}");
-            Console.WriteLine();
+                Console.WriteLine($"Part 2");
+                Console.WriteLine($"\t{Part2()}");
+
+                Console.WriteLine();
+            }
         }
     }
-
-    private void RunSolve(byte n, Func<string> part)
-    {
-        Console.WriteLine($"Part {n}");
-        Solve(true, part);
-        Solve(false, part);
-    }
-
-    public void SolvePart1() => RunSolve(1, Part1);
-    public void SolvePart2() => RunSolve(2, Part2);
 
     protected string ReadAllText() => _input;
     protected string[] ReadAllLines(bool removeEmpty = false) => _input.Split(Environment.NewLine, removeEmpty ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);

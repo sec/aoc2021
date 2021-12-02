@@ -21,6 +21,6 @@ var t = Assembly.GetExecutingAssembly()
 var c = Activator.CreateInstance(t) as BaseDay;
 if (c != null)
 {
-    c.SolvePart1();
-    c.SolvePart2();
+    c.Solve(true);
+    c.Solve(false);
 }
