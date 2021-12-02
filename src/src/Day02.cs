@@ -2,57 +2,42 @@
 
 internal class Day02 : BaseDay
 {
-    protected override string Part1()
+    record Move(string Dir, int Amount);
+
+    List<Move> ParseInput() => ReadAllLinesSplit(" ").Select(x => new Move(x[0], int.Parse(x[1]))).ToList();
+
+    const string _up = "up";
+    const string _down = "down";
+    const string _forward = "forward";
+
+    protected override object Part1()
     {
-        var input = ReadAllLinesSplit(" ");
+        var input = ParseInput();
+        var x = input.Where(x => x.Dir == _forward).Sum(x => x.Amount);
+        var up = input.Where(x => x.Dir == _up).Sum(x => x.Amount);
+        var down = input.Where(x => x.Dir == _down).Sum(x => x.Amount);
 
-        var x = 0;
-        var y = 0;
-
-        foreach (var i in input)
-        {
-            var n = int.Parse(i[1]);
-
-            switch (i[0])
-            {
-                case "forward":
-                    x += n;
-                    break;
-                case "down":
-                    y += n;
-                    break;
-                case "up":
-                    y -= n;
-                    break;
-            }
-        }
-
-        return (x * y).ToString();
+        return (x * (down - up));
     }
 
-    protected override string Part2()
+    protected override object Part2()
     {
-        var input = ReadAllLinesSplit(" ");
-
-        var x = 0;
-        var y = 0;
-        var aim = 0;
+        var input = ParseInput();
+        int x = 0, y = 0, aim = 0;
 
         foreach (var i in input)
         {
-            var n = int.Parse(i[1]);
-
-            switch (i[0])
+            switch (i.Dir)
             {
-                case "forward":
-                    x += n;
-                    y += aim * n;
+                case _forward:
+                    x += i.Amount;
+                    y += aim * i.Amount;
                     break;
-                case "down":
-                    aim += n;
+                case _down:
+                    aim += i.Amount;
                     break;
-                case "up":
-                    aim -= n;
+                case _up:
+                    aim -= i.Amount;
                     break;
             }
         }
