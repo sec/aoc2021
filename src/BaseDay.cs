@@ -33,6 +33,6 @@ internal abstract class BaseDay
     protected string[] ReadAllTextSplit(string chars) => ReadAllText().Split(chars.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
     protected IEnumerable<string[]> ReadAllLinesSplit(string chars) => ReadAllLines().Select(x => x.Split(chars.ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
 
-    protected abstract string Part1();
-    protected abstract string Part2();
+    protected abstract object Part1();
+    protected abstract object Part2();
 }
