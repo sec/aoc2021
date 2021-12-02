@@ -16,6 +16,7 @@ internal abstract class BaseDay
             _input = File.ReadAllText(inputfile);
             if (!string.IsNullOrWhiteSpace(_input))
             {
+                Console.WriteLine(test ? "Test" : "Real");
                 Console.WriteLine($"Part 1");
                 Console.WriteLine($"\t{Part1()}");
 
