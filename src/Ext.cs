@@ -51,4 +51,12 @@ internal static class Ext
     internal static int ManhattanDistance(int x1, int y1, int x2, int y2) => Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
 
     internal static int ManhattanDistance(int x1, int y1, int z1, int x2, int y2, int z2) => Math.Abs(x1 - x2) + Math.Abs(y1 - y2) + Math.Abs(z1 - z2);
+
+    internal static IEnumerable<IEnumerable<T>> GetConsecutive<T>(this IEnumerable<T> src, int length)
+    {
+        for (int i = 0; i < src.Count() - length + 1; i++)
+        {
+            yield return src.Skip(i).Take(length);
+        }
+    }
 }
