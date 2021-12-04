@@ -59,4 +59,34 @@ internal static class Ext
             yield return src.Skip(i).Take(length);
         }
     }
+
+    internal static IEnumerable<T> GetColumn<T>(this T[][] src, int columnIndex)
+    {
+        for (var i = 0; i < src.GetLength(0); i++)
+        {
+            yield return src[i][columnIndex];
+        }
+    }
+
+    internal static void Iterate<T>(this T[][] src, Action<int, int, T> func)
+    {
+        for (var i = 0; i < src.GetLength(0); i++)
+        {
+            for (var j = 0; j < src[i].GetLength(0); j++)
+            {
+                func(i, j, src[i][j]);
+            }
+        }
+    }
+
+    internal static IEnumerable<(int row, int column, T value)> Flat<T>(this T[][] src)
+    {
+        for (var i = 0; i < src.GetLength(0); i++)
+        {
+            for (var j = 0; j < src[i].GetLength(0); j++)
+            {
+                yield return (i, j, src[i][j]);
+            }
+        }
+    }
 }
