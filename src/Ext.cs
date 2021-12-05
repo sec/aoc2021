@@ -89,4 +89,15 @@ internal static class Ext
             }
         }
     }
+
+    internal static IEnumerable<(int row, int column, T value)> Flat<T>(this T[,] src)
+    {
+        for (var i = 0; i < src.GetLength(0); i++)
+        {
+            for (var j = 0; j < src.GetLength(1); j++)
+            {
+                yield return (i, j, src[i, j]);
+            }
+        }
+    }
 }
