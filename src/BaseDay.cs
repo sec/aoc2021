@@ -1,4 +1,6 @@
-﻿namespace aoc2021;
+﻿using System.Diagnostics;
+
+namespace aoc2021;
 
 internal abstract class BaseDay
 {
@@ -15,16 +17,28 @@ internal abstract class BaseDay
         {
             _input = File.ReadAllText(inputfile);
             if (!string.IsNullOrWhiteSpace(_input))
-            {
+            {               
                 Console.WriteLine($"{(test ? "Test" : "Real")} #{day}");
-                Console.WriteLine($"Part 1");
-                Console.WriteLine($"\t{Part1()}");
 
-                Console.WriteLine($"Part 2");
-                Console.WriteLine($"\t{Part2()}");
+                var time1 = TimeIt(Part1, out var part1);
+                Console.WriteLine($"Part 1 [{time1}ms]");
+                Console.WriteLine($"\t{part1}");
+
+                var time2 = TimeIt(Part2, out var part2);
+                Console.WriteLine($"Part 2 [{time2}ms]");
+                Console.WriteLine($"\t{part2}");
 
                 Console.WriteLine();
             }
+        }
+
+        static long TimeIt(Func<object> func, out object result)
+        {
+            var sw = Stopwatch.StartNew();
+            result = func();
+            sw.Stop();
+
+            return sw.ElapsedMilliseconds;
         }
     }
 
