@@ -100,4 +100,18 @@ internal static class Ext
             }
         }
     }
+
+    internal static IEnumerable<(int X, int Y)> UpDownLeftRightMoves => new[] { (-1, 0), (1, 0), (0, -1), (0, 1) };
+
+    internal static IEnumerable<(int X, int Y, T Value)> GetAdj<T>(this T[,] map, int x, int y)
+    {
+        foreach (var (X, Y) in UpDownLeftRightMoves)
+        {
+            var (nx, ny) = (x + X, y + Y);
+            if (nx >= 0 && nx < map.GetLength(1) && ny >= 0 && ny < map.GetLength(0))
+            {
+                yield return (nx, ny, map[ny, nx]);
+            }
+        }
+    }
 }
