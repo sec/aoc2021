@@ -30,13 +30,10 @@ internal class Day10 : BaseDay
             {
                 s.Push(c);
             }
-            else if (IsClosing(c))
+            else if (s.Count == 0 || !BracketsMatch(s.Pop(), c))
             {
-                if (s.Count == 0 || !BracketsMatch(s.Pop(), c))
-                {
-                    wrong = c;
-                    return true;
-                }
+                wrong = c;
+                return true;
             }
         }
 
