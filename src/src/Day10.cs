@@ -10,8 +10,6 @@ internal class Day10 : BaseDay
 
     static bool IsOpening(char c) => _open.Contains(c);
 
-    static bool IsClosing(char c) => _close.Contains(c);
-
     static bool BracketsMatch(char open, char close) => close == _close[_open.IndexOf(open)];
 
     static bool OpenCloseMatch(string chunk) => _close.Select(chunk.CountChar).SequenceEqual(_open.Select(chunk.CountChar));
