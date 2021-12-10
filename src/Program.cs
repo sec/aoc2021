@@ -6,6 +6,7 @@ global using System.IO;
 global using System.Text.RegularExpressions;
 global using System.Globalization;
 global using aoc2021;
+global using System.Text;
 
 var day = DateTime.Now.Day;
 if (args.Length == 1)

@@ -114,4 +114,6 @@ internal static class Ext
             }
         }
     }
+
+    internal static int CountChar(this string src, char c) => src.Count(x => x == c);
 }
