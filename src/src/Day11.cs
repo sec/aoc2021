@@ -12,7 +12,8 @@ internal class Day11 : BaseDay
         }
         else
         {
-            return Enumerable.Range(1, 1000).Where(x => Step(grid) == 100).Select(x => x).First();
+            // did extra step, but TakeWhile didn't took it, so +1
+            return 1 + Enumerable.Range(0, int.MaxValue).TakeWhile(x => Step(grid) != 100).Count();
         }
     }
 
