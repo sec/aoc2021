@@ -68,13 +68,13 @@ internal static class Ext
         }
     }
 
-    internal static void Iterate<T>(this T[][] src, Action<int, int, T> func)
+    internal static void Iterate<T>(this T[][] src, Action<(int X, int Y, T Value)> func)
     {
         for (var i = 0; i < src.GetLength(0); i++)
         {
             for (var j = 0; j < src[i].GetLength(0); j++)
             {
-                func(i, j, src[i][j]);
+                func((i, j, src[i][j]));
             }
         }
     }
@@ -103,6 +103,8 @@ internal static class Ext
 
     internal static IEnumerable<(int X, int Y)> UpDownLeftRightMoves => new[] { (-1, 0), (1, 0), (0, -1), (0, 1) };
 
+    internal static IEnumerable<(int X, int Y)> DiagUpDownLeftRightMoves => new[] { (-1, -1), (1, -1), (-1, 1), (1, 1) };
+
     internal static IEnumerable<(int X, int Y, T Value)> GetAdj<T>(this T[,] map, int x, int y)
     {
         foreach (var (X, Y) in UpDownLeftRightMoves)
@@ -115,5 +117,59 @@ internal static class Ext
         }
     }
 
+    internal static IEnumerable<(int X, int Y, T Value)> GetDiagAdj<T>(this T[,] map, int x, int y)
+    {
+        foreach (var (X, Y) in DiagUpDownLeftRightMoves)
+        {
+            var (nx, ny) = (x + X, y + Y);
+            if (nx >= 0 && nx < map.GetLength(1) && ny >= 0 && ny < map.GetLength(0))
+            {
+                yield return (nx, ny, map[ny, nx]);
+            }
+        }
+    }
+
+    internal static IEnumerable<(int X, int Y, T Value)> GetAllAdj<T>(this T[,] map, int x, int y)
+    {
+        foreach (var (X, Y) in UpDownLeftRightMoves.Union(DiagUpDownLeftRightMoves))
+        {
+            var (nx, ny) = (x + X, y + Y);
+            if (nx >= 0 && nx < map.GetLength(1) && ny >= 0 && ny < map.GetLength(0))
+            {
+                yield return (nx, ny, map[ny, nx]);
+            }
+        }
+    }
+
     internal static int CountChar(this string src, char c) => src.Count(x => x == c);
+
+    internal static T[,] Iterate<T>(this T[,] src, Action<(int X, int Y, T Value)> func)
+    {
+        for (var i = 0; i < src.GetLength(0); i++)
+        {
+            for (var j = 0; j < src.GetLength(1); j++)
+            {
+                func((j, i, src[i, j]));
+            }
+        }
+
+        return src;
+    }
+
+    internal static T[,] ToGrid<T>(this string[] src, Func<string, T> parser)
+    {
+        var width = src[0].Length;
+        var height = src.Length;
+        var grid = new T[height, width];
+
+        for (var y = 0; y < height; y++)
+        {
+            for (var x = 0; x < width; x++)
+            {
+                grid[y, x] = parser(src[y][x].ToString());
+            }
+        }
+
+        return grid;
+    }
 }

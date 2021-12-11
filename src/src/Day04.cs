@@ -34,7 +34,7 @@ internal class Day04 : BaseDay
             }
         }
 
-        internal void Mark(int number) => Numbers.Iterate((i, j, n) => Marked[i][j] = Marked[i][j] | n == number);
+        internal void Mark(int number) => Numbers.Iterate(item => Marked[item.X][item.Y] = Marked[item.X][item.Y] | item.Value == number);
 
         internal bool Won() => Enumerable.Range(0, BOARD_SIZE).Any(i => Marked[i].All(x => x) || Marked.GetColumn(i).All(x => x));
 
