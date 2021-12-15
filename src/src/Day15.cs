@@ -4,52 +4,6 @@ internal class Day15 : BaseDay
 {
     record Point(int X, int Y);
 
-    object Run2(bool isPartTwo)
-    {
-        var result = int.MaxValue;
-
-        var map = ReadAllLines(true).ToGrid(int.Parse);
-
-        var fringe = new Queue<List<Point>>();
-        var visited = new HashSet<Point>();
-
-        fringe.Enqueue(new List<Point>() { new Point(0, 0) });
-
-        var finish = new Point(map.GetLength(1) - 1, map.GetLength(0) - 1);
-
-        while (fringe.Count > 0)
-        {
-            var path = fringe.Dequeue();
-            var p = path.Last();
-
-            if (p == finish)
-            {
-                var riskLevel = path.Skip(1).Select(i => map[i.Y, i.X]).Sum();
-                if (riskLevel < result)
-                {
-                    result = riskLevel;
-                }
-                continue;
-            }
-
-            foreach (var (X, Y, Value) in map.GetAdj(p.X, p.Y))
-            {
-                var np = new Point(X, Y);
-                var npath = path.Concat(new[] { np }).ToList();
-
-                if (visited.Contains(np))
-                {
-                    continue;
-                }
-
-                visited.Add(np);
-                fringe.Enqueue(npath);
-            }
-        }
-
-        return result;
-    }
-
     static int FindPath(int[,] map)
     {
         // Dijkstra's algorithm
