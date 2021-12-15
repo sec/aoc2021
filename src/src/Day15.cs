@@ -50,13 +50,43 @@ internal class Day15 : BaseDay
         throw new InvalidDataException();
     }
 
+    static int UCS(int[,] map)
+    {
+        // Uniform-cost search
+        var finish = new Point(map.GetLength(1) - 1, map.GetLength(0) - 1);
+        var start = new Point(0, 0);
+
+        var fringe = new PriorityQueue<Point, int>(new[] { (start, 0) });
+        var visited = new HashSet<Point>();
+
+        while (fringe.TryDequeue(out var item, out var dist))
+        {
+            if (item == finish)
+            {
+                return dist;
+            }
+
+            foreach (var (X, Y, Value) in map.GetAdj(item.X, item.Y))
+            {
+                var p = new Point(X, Y);
+                if (!visited.Contains(p))
+                {
+                    fringe.Enqueue(p, dist + Value);
+                    visited.Add(p);
+                }
+            }
+        }
+
+        throw new InvalidDataException();
+    }
+
     object Run(bool isPartTwo)
     {
         var map = ReadAllLines(true).ToGrid(int.Parse);
 
         if (!isPartTwo)
         {
-            return FindPath(map);
+            return UCS(map);
         }
         else
         {
@@ -94,7 +124,7 @@ internal class Day15 : BaseDay
             }
             #endregion
 
-            return FindPath(final_map);
+            return UCS(final_map);
         }
     }
 
