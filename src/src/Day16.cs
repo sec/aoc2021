@@ -27,12 +27,12 @@ internal class Day16 : BaseDay
 
     (Packet Packet, string Input) ParsePacket(string input)
     {
-        var nodes = new List<Packet>();
-
         input = Extract(input, 3, out var version);
         input = Extract(input, 3, out var packettype);
 
-        if (packettype == (int) PacketType.literal)
+        var packet = new Packet(version, (PacketType) packettype, 0, new());
+
+        if (packet.Kind == PacketType.literal)
         {
             var sb = new StringBuilder();
 
@@ -44,7 +44,7 @@ internal class Day16 : BaseDay
 
                 if (groupType == 0)
                 {
-                    return (new Packet(version, (PacketType) packettype, Convert.ToInt64(sb.ToString(), 2), nodes), input);
+                    return (packet with { Value = Convert.ToInt64(sb.ToString(), 2) }, input);
                 }
             }
         }
@@ -60,7 +60,7 @@ internal class Day16 : BaseDay
                 while (processed < totalLength)
                 {
                     var (child, newinput) = ParsePacket(input);
-                    nodes.Add(child);
+                    packet.SubPackets.Add(child);
 
                     processed += input.Length - newinput.Length;
                     input = newinput;
@@ -72,14 +72,14 @@ internal class Day16 : BaseDay
                 for (var i = 0; i < totalPackets; i++)
                 {
                     var (child, newinput) = ParsePacket(input);
-                    nodes.Add(child);
+                    packet.SubPackets.Add(child);
 
                     input = newinput;
                 }
             }
         }
 
-        return (new Packet(version, (PacketType) packettype, 0, nodes), input);
+        return (packet, input);
     }
 
     string Extract(string src, int count, out int value)
