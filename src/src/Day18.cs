@@ -6,7 +6,7 @@ internal class Day18 : BaseDay
 
     class Node
     {
-        public int? Value;
+        public int? Number;
 
         public Node? Left = null;
         public Node? Right = null;
@@ -19,18 +19,18 @@ internal class Day18 : BaseDay
 
         public Node(int v)
         {
-            Value = v;
+            Number = v;
         }
 
-        public bool IsRegularPair => Left != null && Left.Value.HasValue && Right != null && Right.Value.HasValue;
+        public bool IsRegularPair => Left != null && Left.Number.HasValue && Right != null && Right.Number.HasValue;
 
         public int Magnitude
         {
             get
             {
-                if (Value.HasValue)
+                if (Number.HasValue)
                 {
-                    return Value.Value;
+                    return Number.Value;
                 }
                 if (Left != null && Right != null)
                 {
@@ -60,7 +60,7 @@ internal class Day18 : BaseDay
         // logic
         if (commas == 0)
         {
-            node.Value = int.Parse(input);
+            node.Number = int.Parse(input);
         }
         else if (commas == 1)
         {
@@ -130,29 +130,29 @@ internal class Day18 : BaseDay
 
         if (level > 4 && node.IsRegularPair)
         {
-            if (node.Left == null || node.Right == null || node.Left.Value == null || node.Right.Value == null)
+            if (node.Left == null || node.Right == null || node.Left.Number == null || node.Right.Number == null)
             {
                 throw new InvalidDataException();
             }
 
-            var left = node.Left.Value.Value;
-            var right = node.Right.Value.Value;
+            var left = node.Left.Number.Value;
+            var right = node.Right.Number.Value;
 
             var leftNode = FindLeft(node);
             if (leftNode != null)
             {
-                leftNode.Value += left;
+                leftNode.Number += left;
             }
 
             var rightNode = FindRight(node);
             if (rightNode != null)
             {
-                rightNode.Value += right;
+                rightNode.Number += right;
             }
 
             node.Left = null;
             node.Right = null;
-            node.Value = 0;
+            node.Number = 0;
 
             _wasChangeDone = true;
         }
@@ -217,12 +217,12 @@ internal class Day18 : BaseDay
             SplitTree(node.Right, node);
         }
 
-        if (node.Value.HasValue && node.Value.Value >= 10)
+        if (node.Number.HasValue && node.Number.Value >= 10)
         {
             _wasChangeDone = true;
 
-            var left = (int) Math.Floor(node.Value.Value / 2.0);
-            var right = (int) Math.Ceiling(node.Value.Value / 2.0);
+            var left = (int) Math.Floor(node.Number.Value / 2.0);
+            var right = (int) Math.Ceiling(node.Number.Value / 2.0);
 
             var nnode = new Node()
             {
