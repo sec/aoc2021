@@ -131,7 +131,6 @@ internal class Day19 : BaseDay
                         break;
                     }
                 }
-
             }
         }
     }
