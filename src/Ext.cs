@@ -105,6 +105,8 @@ internal static class Ext
 
     internal static IEnumerable<(int X, int Y)> DiagUpDownLeftRightMoves => new[] { (-1, -1), (1, -1), (-1, 1), (1, 1) };
 
+    internal static IEnumerable<(int X, int Y)> AroundMoves => new[] { (-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1) };
+
     internal static IEnumerable<(int X, int Y, T Value)> GetAdj<T>(this T[,] map, int x, int y)
     {
         foreach (var (X, Y) in UpDownLeftRightMoves)
