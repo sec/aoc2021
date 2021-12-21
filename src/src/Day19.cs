@@ -85,10 +85,7 @@ internal class Day19 : BaseDay
                     var diff = beaconA - beaconB;
                     var movedB = twoBeacons.Select(p => p + diff);
 
-                    var tmp = new HashSet<Point>(one.Beacons);
-                    tmp.IntersectWith(movedB);
-
-                    if (tmp.Count >= 12)
+                    if (movedB.Intersect(one.Beacons).Count() >= 12)
                     {
                         // add reoriented beacons to newly located scanner
                         two.Beacons = new HashSet<Point>(movedB);
@@ -137,7 +134,6 @@ internal class Day19 : BaseDay
                         unlocated.Position = delta;
 
                         Console.WriteLine($"Located {unlocated.Index} at {unlocated.Position} with {located.Index}");
-
                         break;
                     }
                 }
