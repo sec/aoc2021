@@ -174,12 +174,4 @@ internal static class Ext
 
         return grid;
     }
-
-    internal static IEnumerable<TSource> Intersect<TSource>(this IEnumerable<TSource> first, HashSet<TSource> second)
-    {
-        foreach (TSource element in first)
-        {
-            if (second.Contains(element)) yield return element;
-        }
-    }
 }
