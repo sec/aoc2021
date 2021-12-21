@@ -2,7 +2,7 @@
 
 internal class Day19 : BaseDay
 {
-    record Point(int X, int Y, int Z)
+    record struct Point(int X, int Y, int Z)
     {
         public static Point FromString(string data)
         {
@@ -54,13 +54,22 @@ internal class Day19 : BaseDay
         public static Point operator +(Point a, Point b) => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
     }
 
-    record Scanner(int Index, List<Point> Beacons)
+    class Scanner
     {
+        public int Index;
+        public HashSet<Point> Beacons;
         public Point Position = new(0, 0, 0);
 
         public bool Located = false;
 
-        public Lazy<List<List<Point>>> Rotated = new(() => Enumerable.Range(0, 24).Select(i => Beacons.Select(p => p.Rotate(i)).ToList()).ToList());
+        public Lazy<List<HashSet<Point>>> Rotated;
+
+        public Scanner(int index)
+        {
+            Beacons = new();
+            Index = index;
+            Rotated = new(() => Enumerable.Range(0, 24).Select(i => Beacons.Select(p => p.Rotate(i)).ToHashSet()).ToList());
+        }
     }
 
     private List<Scanner>? _scanners;
@@ -74,14 +83,15 @@ internal class Day19 : BaseDay
                 foreach (var beaconB in twoBeacons)
                 {
                     var diff = beaconA - beaconB;
-                    var movedB = twoBeacons.Select(p => p + diff).ToList();
-                    var common = one.Beacons.Where(p => movedB.Contains(p));
+                    var movedB = twoBeacons.Select(p => p + diff);
 
-                    if (common.Count() >= 12)
+                    var tmp = new HashSet<Point>(one.Beacons);
+                    tmp.IntersectWith(movedB);
+
+                    if (tmp.Count >= 12)
                     {
                         // add reoriented beacons to newly located scanner
-                        two.Beacons.Clear();
-                        two.Beacons.AddRange(movedB);
+                        two.Beacons = new HashSet<Point>(movedB);
 
                         Where = diff;
 
@@ -103,7 +113,7 @@ internal class Day19 : BaseDay
         {
             if (line.StartsWith("---"))
             {
-                _scanners.Add(new Scanner(int.Parse(line.Split(" ")[2]), new()));
+                _scanners.Add(new Scanner(int.Parse(line.Split(" ")[2])));
             }
             else
             {
