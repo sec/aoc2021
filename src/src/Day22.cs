@@ -1,4 +1,6 @@
-﻿namespace aoc2021.src;
+﻿using System.Collections.Concurrent;
+
+namespace aoc2021.src;
 
 internal class Day22 : BaseDay
 {
@@ -16,10 +18,6 @@ internal class Day22 : BaseDay
         {
             return (a.From.X <= b.To.X && a.To.X >= b.From.X) && (a.From.Y <= b.To.Y && a.To.Y >= b.From.Y) && (a.From.Z <= b.To.Z && a.To.Z >= b.From.Z);
         }
-    }
-
-    record struct Cuboid(Point Start, Point End)
-    {
     }
 
     IEnumerable<Step> ParseInput()
@@ -62,52 +60,68 @@ internal class Day22 : BaseDay
 
     void PrintOpenScad()
     {
-        var off = new StringBuilder();
-        var on = new StringBuilder();
+        var cad = string.Empty;
         foreach (var step in ParseInput().ToList())
         {
-            var sb = step.State ? on : off;
-            sb.AppendLine($"translate([{step.From.X}, {step.From.Y}, {step.From.Z}]) cube([{step.SizeX}, {step.SizeY}, {step.SizeZ}]);");
+            var func = step.State ? "union" : "difference";
+            var cube = $"translate([{step.From.X}, {step.From.Y}, {step.From.Z}]) cube([{step.SizeX}, {step.SizeY}, {step.SizeZ}]);";
+            cad = $"{func}() {{ {cad} {cube} }};";
         }
-        Console.WriteLine($"difference() {{");
-        Console.WriteLine($"union() {{ {on} }};");
-        Console.WriteLine($"union() {{ {off} }};");
-        Console.WriteLine($"}}");
+        Console.WriteLine(cad);
     }
 
     protected override object Part2()
     {
+        /*
+         * Won't work for real/big Part 2.
+         * Solved using:
+         * - PrintOpenScad();
+         * - Load into OpenScad and export as STL
+         * - Load into FreeCAD, create part from mesh and got volume using App.ActiveDocument.getObjectsByLabel("Untitled001")[0].Shape.Volume
+         * - Used some online tool to calculate volume also
+         * - Min: 1160011199157378
+         * - Max: 1160011199157383
+         * - Correct: 1160011199157381 (took 3 tries to guess)
+         */
+
+        PrintOpenScad();
+
         var cubes = new List<Step>();
-        var volumes = new List<long>();
+        var volumes = new ConcurrentBag<long>();
+
+        var curr = 0;
+        var total = ParseInput().Count();
 
         foreach (var step in ParseInput())
         {
+            Console.WriteLine($"{curr++} / {total}");
+
             if (step.State)
             {
                 // add new cube volume to list
                 volumes.Add(step.Volume);
-                // check for common parts with old cubes
-                foreach (var old in cubes)
+                // check for common parts with old cubes                
+                Parallel.ForEach(cubes, old =>
                 {
                     if (Step.Intersect(old, step))
                     {
                         var common = GetCommonVolume(step, old);
                         volumes.Add(-common);
                     }
-                }
+                });
                 // add new cube to cubes
                 cubes.Add(step);
             }
             else
             {
-                foreach (var old in cubes)
+                Parallel.ForEach(cubes, old =>
                 {
                     if (Step.Intersect(old, step))
                     {
                         var common = GetCommonVolume(step, old);
                         volumes.Add(-common);
                     }
-                }
+                });
             }
         }
 
@@ -116,35 +130,24 @@ internal class Day22 : BaseDay
 
     static long GetCommonVolume(Step step, Step old)
     {
-        //if (old.Volume < step.Volume)
-        //{
-        //    var tmp = step;
-        //    step = old;
-        //    old = tmp;
-        //}
-
         var common = 0L;
         Parallel.For(step.From.X, step.To.X + 1, x =>
-        //for (var x = step.From.X; x <= step.To.X; x++)
         {
-              Parallel.For(step.From.Y, step.To.Y + 1, y =>
-              //for (var y = step.From.Y; y <= step.To.Y; y++)
-              {
-                  Parallel.For(step.From.Z, step.To.Z + 1, z =>
-                  //for (var z = step.From.Z; z <= step.To.Z; z++)
-                  {
-                      var cx = x >= old.From.X && x <= old.To.X;
-                      var cy = y >= old.From.Y && y <= old.To.Y;
-                      var cz = z >= old.From.Z && z <= old.To.Z;
-                      if (cx && cy && cz)
-                      {
-                          Interlocked.Increment(ref common);
-                          //common++;
-                      }
-                  });
-              });
+            Parallel.For(step.From.Y, step.To.Y + 1, y =>
+            {
+                Parallel.For(step.From.Z, step.To.Z + 1, z =>
+                {
+                    var cx = x >= old.From.X && x <= old.To.X;
+                    var cy = y >= old.From.Y && y <= old.To.Y;
+                    var cz = z >= old.From.Z && z <= old.To.Z;
+                    if (cx && cy && cz)
+                    {
+                        Interlocked.Increment(ref common);
+                    }
+                });
+            });
 
-          });
+        });
         return common;
     }
 }

@@ -4,7 +4,6 @@ global using System.Reflection;
 global using System.Collections.Generic;
 global using System.IO;
 global using System.Text.RegularExpressions;
-global using System.Globalization;
 global using aoc2021;
 global using System.Text;
 
@@ -19,8 +18,7 @@ var t = Assembly.GetExecutingAssembly()
     .Where(x => x.Name == $"Day{day:d2}")
     .Single();
 
-var c = Activator.CreateInstance(t) as BaseDay;
-if (c != null)
+if (Activator.CreateInstance(t) is BaseDay c)
 {
     c.Solve(true);
     c.Solve(false);
